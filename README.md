@@ -20,7 +20,7 @@ To use it, it is enough to have basic CSS knowledge. here is a usage example:
 @import url("https://cdn.jsdelivr.net/npm/mycolorscheme@latest/mytheme.min.css")
 
 body {
-    background-color: var(--slate-1); /* sets the background color of the page to white for light and black for dark */
-    color: var(--slate-11); /* sets the text color of the page to black for light and white for dark */
+    background-color: var(--slate-50); /* sets the background color of the page to white for light and black for dark */
+    color: var(--slate-950); /* sets the text color of the page to black for light and white for dark */
 }
 ```
