@@ -6,9 +6,9 @@ I was using Nextjs 14 and I started using tailwind's gorgeous colors by includin
 Additionally, creating these color codes has become very useful in my normal HTML projects. I started using this in every project.
 
 > [!NOTE]   
-> :root     
-> @media (prefers-color-scheme: dark)    
-> [data-theme="light"] and [data-them="dark"] selectors are available in this project.     
+> `:root`     
+> `@media (prefers-color-scheme: dark)`    
+> `[data-theme="light"]` and `[data-them="dark"]` selectors are available in this project.     
 
 ## How to use?
 
