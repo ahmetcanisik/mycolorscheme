@@ -88,15 +88,13 @@ class printInCSSFile:
     }}
 }}
 [data-theme='dark'] {{
+    color-scheme: dark;
     {self.create_variables(mode="dark", minify=minify)}
 }}
             """
         else:
             css = f"""
-:root {{
-    {self.create_variables(mode="light", minify=minify)}
-}}
-[data-theme='light'] {{
+:root,[data-theme='light'] {{
     {self.create_variables(mode="light", minify=minify)}
 }}
             """
