@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import os
 
 
 # tailwind renk kodlarını çekeceğim.
@@ -58,8 +59,9 @@ class tailwindColors:
         return result
 
 
-class printInCSSFile:
+class MyTheme:
     def __init__(self):
+        self.dirPath = os.path.abspath(os.path.join("output", "mytheme"))
         self.twColors = tailwindColors().get()
         self.color_codes = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"]
 
@@ -101,12 +103,18 @@ class printInCSSFile:
         return css.replace('\n', '').replace(' ', '') if minify else css
 
     def save(self, minify=False, file_name="mytheme.css"):
-        with open(file_name, "w", encoding="utf-8") as file:
+        os.makedirs(self.dirPath, exist_ok=True)
+        full_path = os.path.abspath(os.path.join(self.dirPath, file_name))
+        with open(full_path, "w", encoding="utf-8") as file:
             file.write(self.theme(mode="light", minify=minify) + self.theme(mode="dark", minify=minify))
+        print(f"saving succesfully! {full_path}")
 
+
+def main():
+    mytheme = MyTheme()
+    mytheme.save()
+    mytheme.save(file_name="mytheme.min.css", minify=True)
 
 # tailwind renk kodlarını mytheme.css içerisine :root sınıfı içerisinde --slate-1,2,3 olarak kaydedeceğim.
 if __name__ == "__main__":
-    generateCSS = printInCSSFile()
-    generateCSS.save()
-    generateCSS.save(file_name="mytheme.min.css", minify=True)
+    main()

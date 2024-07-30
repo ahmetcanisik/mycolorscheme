@@ -1,0 +1,35 @@
+:root {
+   --cursor-default: url('cursor/light/default.svg');
+   --cursor-pointer: url('cursor/light/pointer.svg');
+   --cursor-not-allowed: url('cursor/light/not-allowed.svg');
+   --cursor-progress: url('cursor/light/progress.svg');
+   --cursor-text: url('cursor/light/text.svg');
+   --cursor-wait: url('cursor/light/wait.svg');
+}
+[data-theme='light'] {
+   --cursor-default: url('cursor/light/default.svg');
+   --cursor-pointer: url('cursor/light/pointer.svg');
+   --cursor-not-allowed: url('cursor/light/not-allowed.svg');
+   --cursor-progress: url('cursor/light/progress.svg');
+   --cursor-text: url('cursor/light/text.svg');
+   --cursor-wait: url('cursor/light/wait.svg');
+}
+@media (prefers-color-scheme: dark) {
+:root {
+   --cursor-default: url('cursor/dark/default.svg');
+   --cursor-pointer: url('cursor/dark/pointer.svg');
+   --cursor-not-allowed: url('cursor/dark/not-allowed.svg');
+   --cursor-progress: url('cursor/dark/progress.svg');
+   --cursor-text: url('cursor/dark/text.svg');
+   --cursor-wait: url('cursor/dark/wait.svg');
+}
+}
+[data-theme='dark'] {
+    color-scheme: dark;
+   --cursor-default: url('cursor/dark/default.svg');
+   --cursor-pointer: url('cursor/dark/pointer.svg');
+   --cursor-not-allowed: url('cursor/dark/not-allowed.svg');
+   --cursor-progress: url('cursor/dark/progress.svg');
+   --cursor-text: url('cursor/dark/text.svg');
+   --cursor-wait: url('cursor/dark/wait.svg');
+}

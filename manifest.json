@@ -1,0 +1,23 @@
+{
+    "name": "mycolorscheme",
+    "version": "0.0.6",
+    "description": "Convert tailwindcolors to css :root selector variables. This package is a root color scheme that can be used on websites, it also supports light and dark as data-theme",
+    "main": "index.js",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/ahmetcanisik/mycolorscheme.git"
+    },
+    "keywords": [
+      "mycolorscheme",
+      "mytheme",
+      "ahmetcanisik",
+      "tailwindcolors",
+      "tailwindrootcolors"
+    ],
+    "author": "ahmetcanisik",
+    "license": "MIT",
+    "bugs": {
+      "url": "https://github.com/ahmetcanisik/mycolorscheme/issues"
+    },
+    "homepage": "https://github.com/ahmetcanisik/mycolorscheme#readme"
+  }

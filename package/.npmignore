@@ -1,0 +1,13 @@
+.vscode
+.idea
+.__pycache__
+
+.gitignore
+.gitattribiutes
+
+main.py
+setup.py
+mytheme.py
+mycursor.py
+__init__.py
+__main__.py
