@@ -1,3 +1,5 @@
 .vscode
 .idea
 __pycache__
+mycursor/__pycache__
+mytheme/__pycache__
