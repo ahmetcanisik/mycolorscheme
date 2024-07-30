@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import json
 import os
 
 
@@ -61,52 +62,87 @@ class tailwindColors:
 
 class MyTheme:
     def __init__(self):
-        self.dirPath = os.path.abspath(os.path.join("output", "mytheme"))
+        self.dirPath = os.path.abspath("package")
+        if not os.path.exists(self.dirPath):
+            os.makedirs(self.dirPath)
         self.twColors = tailwindColors().get()
         self.color_codes = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"]
 
-    def create_variables(self, mode, minify=False):
-        css = ""
-        for i, color in enumerate(self.twColors):
-            title = color["title"].lower()
-
-            if minify == False:
-                css += f"\n/* {title} */\n"
-
-            if mode == "dark":
-                for index, color_code in enumerate(reversed(color["colors"])):
-                    css += f"--{title}-{str(self.color_codes[index])}: {color_code};\n"
-            else:
-                for index, color_code in enumerate(color["colors"]):
-                    css += f"--{title}-{str(self.color_codes[index])}: {color_code};\n"
+    
+    def manifest(self):
+        with open(os.path.abspath("manifest.json"), "r", encoding="utf-8") as file:
+            info = json.load(file)
+        css = f"""/*
+* @name         : {info["name"]}
+* @version      : {info["version"]}
+* @description  : {info["description"]}
+* @author       : {info["author"]}
+* @license      : {info["license"]}
+*/
+"""
         return css
+
+
+    def create_variables(self, mode, lang, minify=False):
+        if lang == "css":
+            css = ""
+            for color in self.twColors:
+                title = color["title"].lower()
+
+                if minify == False:
+                    css += f"\n/* {title} */\n"
+
+                if mode == "dark":
+                    for index, color_code in enumerate(reversed(color["colors"])):
+                        css += f"--{title}-{str(self.color_codes[index])}: {color_code};\n"
+                else:
+                    for index, color_code in enumerate(color["colors"]):
+                        css += f"--{title}-{str(self.color_codes[index])}: {color_code};\n"
+            return css
+        if lang == "json":
+            color_list = {
+                "light": {},
+                "dark": {}
+            }
+            for color in self.twColors:
+                title = color["title"].lower()
+                for index, color_code in enumerate(reversed(color["colors"])):
+                    color_list["dark"][f'{title}-{str(self.color_codes[index])}'] = color_code
+                for index, color_code in enumerate(color["colors"]):
+                    color_list["light"][f'{title}-{str(self.color_codes[index])}'] = color_code
+            return color_list
+
 
     def theme(self, mode, minify = False):
         if mode == "dark":
             css = f"""
 @media (prefers-color-scheme: dark) {{
     :root {{
-        {self.create_variables(mode="dark", minify=minify)}
+        {self.create_variables(mode="dark", lang="css", minify=minify)}
     }}
 }}
 [data-theme='dark'] {{
-    color-scheme: dark;
-    {self.create_variables(mode="dark", minify=minify)}
+    {self.create_variables(mode="dark", lang="css", minify=minify)}
 }}
             """
         else:
             css = f"""
-:root,[data-theme='light'] {{
-    {self.create_variables(mode="light", minify=minify)}
+:root {{
+    {self.create_variables(mode="light", lang="css", minify=minify)}
+}}
+[data-theme='light'] {{
+    {self.create_variables(mode="light", lang="css", minify=minify)}
 }}
             """
         return css.replace('\n', '').replace(' ', '') if minify else css
 
+
     def save(self, minify=False, file_name="mytheme.css"):
-        os.makedirs(self.dirPath, exist_ok=True)
         full_path = os.path.abspath(os.path.join(self.dirPath, file_name))
         with open(full_path, "w", encoding="utf-8") as file:
-            file.write(self.theme(mode="light", minify=minify) + self.theme(mode="dark", minify=minify))
+            file.write(self.manifest() + self.theme(mode="light", minify=minify) + self.theme(mode="dark", minify=minify))
+        with open("mycolorscheme.json", "w", encoding="utf-8") as jsonFile:
+            json.dump(self.create_variables(lang="json", mode="light"), jsonFile, ensure_ascii=False, indent=2)
         print(f"saving succesfully! {full_path}")
 
 

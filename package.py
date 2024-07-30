@@ -1,11 +1,10 @@
-import json
 import shutil
 import os
 
 class Package:
     def __init__(self):
         # create package folder
-        self.dirPath = os.path.abspath(os.path.join("package"))
+        self.dirPath = os.path.abspath("package")
         os.makedirs(self.dirPath, exist_ok=True)
 
         
@@ -46,12 +45,12 @@ module.exports = mycolorscheme;""",
     
     # We create our package.json file.
     def __package_json__(self):
-        shutil.copy(os.path.abspath(os.path.join("manifest.json")), os.path.abspath(os.path.join(self.dirPath, "package.json")))
+        shutil.copy(os.path.abspath("manifest.json"), os.path.abspath(os.path.join(self.dirPath, "package.json")))
     
     
     # We also copy our README.md file, which is located in a higher directory and prepared for github, into this directory.
     def __readme_md__(self):
-        shutil.copy(os.path.abspath(os.path.join(".", "README.md")), os.path.abspath(os.path.join(self.dirPath, "README.md")))
+        shutil.copy(os.path.abspath("README.md"), os.path.abspath(os.path.join(self.dirPath, "README.md")))
     
 
     def for_npm(self):
