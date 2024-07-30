@@ -1,15 +1,14 @@
 import os
 import json
 from mytheme import MyTheme
-from mycursor import MyCursor
 from package import Package
 
 def main():
 
     import argparse
     
-    parser = argparse.ArgumentParser(description="Mycolorscheme\ntailwindcss offers an option where you can print color codes to a css file under the root variable and print them by compressing them.\nUsing Mycursor, it also provides a cursor package that you can use on your site under the root variable in the css file.")
-    parser.add_argument('-g', '--generate', type=str, required=False, help="You can enter two parameters as 'mytheme' or 'mycursor'. If you enter any value other than these, you will receive an error. ex: --generate mytheme")
+    parser = argparse.ArgumentParser(description="Mycolorscheme\ntailwindcss offers an option where you can print color codes to a css file under the root variable and print them by compressing theme.")
+    parser.add_argument('-g', '--generate', type=str, required=False, help="You can enter one parameters as 'mytheme'. If you enter any value other than these, you will receive an error. ex: --generate mytheme")
     parser.add_argument('-o', '--output', type=str, required=False, help="Extract the processed data to a file, ex: --output mytheme.css")
     parser.add_argument('-p', '--package', action="store_true", required=False, help="What do you want to pack for? There is currently only one option and that is npm. ex: --package npm")
     parser.add_argument('-m', '--minify', action="store_true", required=False, help="If you enter this flag, it will shrink your data.")
@@ -22,8 +21,8 @@ def main():
         print(f"{package_info["name"]} {package_info["version"]}")
 
     if args.generate:
-        if args.generate == "mytheme" or args.generate == "mycursor":
-            generator = MyTheme() if args.generate == "mytheme" else MyCursor()
+        if args.generate == "mytheme":
+            generator = MyTheme()
             
             if args.output:
                 generator.save(file_name=args.output, minify=args.minify)
