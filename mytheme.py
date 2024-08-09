@@ -115,6 +115,18 @@ class MyTheme:
                         css += f"--{title}-{str(self.color_codes[index])}: {color_code};\n"
             return css
         
+        if type == "dark" and lang == "css":
+            css = ""
+            for color in self.twColors:
+                title = color["title"].lower()
+
+                if minify == False:
+                    css += f"\n/* {title} */\n"
+
+                for index, color_code in enumerate(reversed(color["colors"])):
+                        css += f"--{title}-{str(self.color_codes[index])}: {color_code};\n"
+            return css
+        
         # if type == all veya type == system ise o zaman tüm modları çekiyoruz.
         if type == "all" and lang == "css" or type == "system" and lang == "css":
             css = ""
@@ -138,6 +150,12 @@ class MyTheme:
             css = f"""
 :root {{
     {self.create_variables(type='default' ,mode="light", lang="css", minify=minify)}
+}}
+                """
+        if type == 'dark':
+            css = f"""
+:root {{
+    {self.create_variables(type='dark' , mode="dark", lang="css", minify=minify)}
 }}
                 """
         if type == 'system':
@@ -187,6 +205,8 @@ def runAll():
     mytheme = MyTheme()
     mytheme.save(cssType='default')
     mytheme.save(cssType='default', minify=True)
+    mytheme.save(cssType='dark')
+    mytheme.save(cssType='dark', minify=True)
     mytheme.save(cssType='all')
     mytheme.save(cssType='all', minify=True)
     mytheme.save(cssType='system')
