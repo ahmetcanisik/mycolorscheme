@@ -65,6 +65,11 @@ class MyTheme:
         self.dirPath = os.path.abspath("package")
         if not os.path.exists(self.dirPath):
             os.makedirs(self.dirPath)
+            
+        self.mythemePath = os.path.abspath(os.path.join(self.dirPath, "mytheme"))
+        if not os.path.exists(self.mythemePath):
+            os.makedirs(self.mythemePath)
+            
         self.twColors = tailwindColors().get()
         self.color_codes = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"]
 
@@ -83,8 +88,35 @@ class MyTheme:
         return css
 
 
-    def create_variables(self, mode, lang, minify=False):
-        if lang == "css":
+    def create_variables(self, type, mode, lang, minify=False):
+        if lang == "json":
+            color_list = {
+                "light": {},
+                "dark": {}
+            }
+            for color in self.twColors:
+                title = color["title"].lower()
+                for index, color_code in enumerate(reversed(color["colors"])):
+                    color_list["dark"][f'{title}-{str(self.color_codes[index])}'] = color_code
+                for index, color_code in enumerate(color["colors"]):
+                    color_list["light"][f'{title}-{str(self.color_codes[index])}'] = color_code
+            return color_list
+        
+        # if type == default ise o zaman sadece light modu çekiyoruz.
+        if type == "default" and lang == "css":
+            css = ""
+            for color in self.twColors:
+                title = color["title"].lower()
+
+                if minify == False:
+                    css += f"\n/* {title} */\n"
+
+                for index, color_code in enumerate(color["colors"]):
+                        css += f"--{title}-{str(self.color_codes[index])}: {color_code};\n"
+            return css
+        
+        # if type == all veya type == system ise o zaman tüm modları çekiyoruz.
+        if type == "all" and lang == "css" or type == "system" and lang == "css":
             css = ""
             for color in self.twColors:
                 title = color["title"].lower()
@@ -99,58 +131,66 @@ class MyTheme:
                     for index, color_code in enumerate(color["colors"]):
                         css += f"--{title}-{str(self.color_codes[index])}: {color_code};\n"
             return css
-        if lang == "json":
-            color_list = {
-                "light": {},
-                "dark": {}
-            }
-            for color in self.twColors:
-                title = color["title"].lower()
-                for index, color_code in enumerate(reversed(color["colors"])):
-                    color_list["dark"][f'{title}-{str(self.color_codes[index])}'] = color_code
-                for index, color_code in enumerate(color["colors"]):
-                    color_list["light"][f'{title}-{str(self.color_codes[index])}'] = color_code
-            return color_list
 
 
-    def theme(self, mode, minify = False):
-        if mode == "dark":
-            css = f"""
-@media (prefers-color-scheme: dark) {{
-    :root {{
-        {self.create_variables(mode="dark", lang="css", minify=minify)}
-    }}
-}}
-[data-theme='dark'] {{
-    {self.create_variables(mode="dark", lang="css", minify=minify)}
-}}
-            """
-        else:
+    def theme(self, type = 'default', minify = False):
+        if type == 'default':
             css = f"""
 :root {{
-    {self.create_variables(mode="light", lang="css", minify=minify)}
+    {self.create_variables(type='default' ,mode="light", lang="css", minify=minify)}
+}}
+                """
+        if type == 'system':
+            css = f"""
+:root {{
+    {self.create_variables(type="system", mode="light", lang="css", minify=minify)}
+}}
+@media (prefers-color-scheme: dark) {{
+    {self.create_variables(type="system", mode="dark", lang="css", minify=minify)}
+}}
+                """
+        if type == 'all':
+            css = f"""
+:root {{
+    {self.create_variables(type="all", mode="light", lang="css", minify=minify)}
+}}
+@media (prefers-color-scheme: dark) {{
+    :root {{
+        {self.create_variables(type="all", mode="dark", lang="css", minify=minify)}
+    }}
 }}
 [data-theme='light'] {{
-    {self.create_variables(mode="light", lang="css", minify=minify)}
+    {self.create_variables(type="all", mode="light", lang="css", minify=minify)}
 }}
-            """
+[data-theme='dark'] {{
+    {self.create_variables(type="all", mode="dark", lang="css", minify=minify)}
+}}
+                """
         return css.replace('\n', '').replace(' ', '') if minify else css
 
 
-    def save(self, minify=False, file_name="mytheme.css"):
-        full_path = os.path.abspath(os.path.join(self.dirPath, file_name))
-        with open(full_path, "w", encoding="utf-8") as file:
-            file.write(self.manifest() + self.theme(mode="light", minify=minify) + self.theme(mode="dark", minify=minify))
-        with open("mycolorscheme.json", "w", encoding="utf-8") as jsonFile:
-            json.dump(self.create_variables(lang="json", mode="light"), jsonFile, ensure_ascii=False, indent=2)
-        print(f"saving succesfully! {full_path}")
+    def save(self, cssType="default", minify=False):
+            full_path = os.path.abspath(os.path.join(self.mythemePath, "index.min.css" if minify else "index.css"))
+            if cssType != "default":
+                full_path = os.path.abspath(os.path.join(self.mythemePath, cssType, "index.min.css" if minify else "index.css"))
+                os.makedirs(os.path.dirname(full_path), exist_ok=True)  # Klasörün varlığını kontrol edin
+                
+            with open(full_path, "w", encoding="utf-8") as file:
+                file.write(self.manifest() + self.theme(type=cssType, minify=minify))
+            
+            with open(os.path.join(self.mythemePath, "mytheme.json"), "w", encoding="utf-8") as jsonFile:
+                json.dump(self.create_variables(type='default', lang="json", mode="light"), jsonFile, ensure_ascii=False, indent=2)
+            
+            print(f"saving successfully! {full_path}")
 
-
-def main():
+def runAll():
     mytheme = MyTheme()
-    mytheme.save()
-    mytheme.save(file_name="mytheme.min.css", minify=True)
+    mytheme.save(cssType='default')
+    mytheme.save(cssType='default', minify=True)
+    mytheme.save(cssType='all')
+    mytheme.save(cssType='all', minify=True)
+    mytheme.save(cssType='system')
+    mytheme.save(cssType='system', minify=True)
 
-# tailwind renk kodlarını mytheme.css içerisine :root sınıfı içerisinde --slate-1,2,3 olarak kaydedeceğim.
 if __name__ == "__main__":
-    main()
+    runAll()
